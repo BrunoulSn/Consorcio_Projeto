@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Consórcios</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+    }
+
+    .header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 60px;
+      background-color: rgb(255, 130, 41);
+      display: flex;
+      align-items: center;
+      padding-left: 30px;
+      color: white;
+      font-weight: bold;
+      font-size: 20px;
+      z-index: 1000;
+    }
+
+    #menu {
+      width: 220px;
+      height: 100vh;
+      background-color: rgb(255, 208, 147);
+      padding: 30px 10px;
+      margin-top: 60px;
+    }
+
+    #menu div {
+      width: 200px;
+      margin: 10px auto;
+      padding: 10px;
+      background-color: aliceblue;
+      border-radius: 7px;
+      text-align: center;
+    }
+
+    #content {
+      margin-left: 240px;
+      padding: 100px 30px 30px;
+      flex: 1;
+    }
+
+    #gallery {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+
+    .photo-item {
+      width: 220px;
+      background-color: #f5f5f5;
+      padding: 10px;
+      border-radius: 8px;
+      text-align: center;
+    }
+
+    .photo-item img {
+      width: 100%;
+      height: auto;
+      border-radius: 5px;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">Consórcios</div>
+
+  <div id="menu">
+    <div id="veiculosButton"><p>Consórcio de veículos</p></div>
+    <div id="imoveisButton"><p>Consórcio de imóveis</p></div>
+    <div id="servicosButton"><p>Consórcio de serviços</p></div>
+    <div id="eletroButton"><p>Consórcio de eletroeletrônicos</p></div>
+    <div id="maquinariosButton"><p>Consórcio de maquinários</p></div>
+  </div>
+
+  <div id="content">
+    <h2>Total de consórcios: <span id="total-photos">0</span></h2>
+    <div id="gallery"></div>
+  </div>
+
+  <script>
+    const apiUrl = 'https://run.mocky.io/v3/726a5cb4-5894-44a1-b624-f166abb59767';
+
+    async function fetchPhotos() {
+      try {
+        const response = await fetch(apiUrl);
+        if (!response.ok) throw new Error('Erro na requisição');
+
+        const consorcios = await response.json();
+        displayPhotos(consorcios);
+      } catch (error) {
+        console.error('Erro ao carregar os produtos:', error);
+      }
+    }
+
+    function displayPhotos(consorcios) {
+      const gallery = document.getElementById('gallery');
+      const totalPhotosElement = document.getElementById('total-photos');
+      gallery.innerHTML = '';
+
+      totalPhotosElement.textContent = consorcios.length;
+
+      consorcios.forEach(item => {
+        const photoContainer = document.createElement('div');
+        photoContainer.classList.add('photo-item');
+
+        const imgElement = document.createElement('img');
+        imgElement.src = item.imagemUrl;
+        imgElement.alt = item.nome;
+
+        const titleElement = document.createElement('h3');
+        titleElement.textContent = item.nome;
+
+        const valorElement = document.createElement('p');
+        valorElement.textContent = `Valor: R$ ${item.valor.toFixed(2)}`;
+
+        const parcelasElement = document.createElement('p');
+        parcelasElement.textContent = `Parcelas: ${item.parcelas}`;
+
+        const dataElement = document.createElement('p');
+        dataElement.textContent = `Criado em: ${new Date(item.dataCriacao).toLocaleDateString('pt-BR')}`;
+
+        photoContainer.append(imgElement, titleElement, valorElement, parcelasElement, dataElement);
+        gallery.appendChild(photoContainer);
+      });
+    }
+
+    fetchPhotos();
+  </script>
+</body>
+</html>
